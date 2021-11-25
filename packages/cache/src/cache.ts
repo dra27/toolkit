@@ -50,13 +50,15 @@ function checkKey(key: string): void {
  * @param primaryKey an explicit key for restoring the cache
  * @param restoreKeys an optional ordered list of keys to use for restoring the cache if no cache hit occurred for key
  * @param downloadOptions cache download options
+ * @param checkOnly if true, return the key for the cache hit, but don't restore it
  * @returns string returns the key for the cache hit, otherwise returns undefined
  */
 export async function restoreCache(
   paths: string[],
   primaryKey: string,
   restoreKeys?: string[],
-  options?: DownloadOptions
+  options?: DownloadOptions,
+  checkOnly = false
 ): Promise<string | undefined> {
   checkPaths(paths)
 
@@ -85,6 +87,9 @@ export async function restoreCache(
     // Cache not found
     return undefined
   }
+
+  if (checkOnly)
+    return cacheEntry.cacheKey
 
   const archivePath = path.join(
     await utils.createTempDirectory(),
